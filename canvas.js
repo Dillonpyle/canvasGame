@@ -47,6 +47,7 @@ const checkDistance = () => {
     console.log('works');
 }
 
+//draws from the constructor array 
 function drawObjects() {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
@@ -63,8 +64,6 @@ function drawObjects() {
 
 drawObjects()
 
-
-
 // const activate = () => {
 //     // if (player.xCenter == NPC.xCenter && player.yCenter == NPC.yCenter && e.keyCode == 32) {
 //     //     alert('NPC gave you a key');
@@ -73,31 +72,42 @@ drawObjects()
 
 //------------------------------------
 
-
 function move(e) {
     console.log(e.keyCode);
 
     //move right     
     if (e.keyCode == 39 && gameArry[0].x < 780) {
-        gameArry[0].x += 5;
+        gameArry[0].x += 10;
     }
     //move left
     if (e.keyCode == 37 && gameArry[0].x > 0) {
-        gameArry[0].x -= 5;
+        gameArry[0].x -= 10;
     }
     //movedown
     if (e.keyCode == 40 && gameArry[0].y < 780) {
-        gameArry[0].y += 5;
+        gameArry[0].y += 10;
     }
     //moveup
     if (e.keyCode == 38 && gameArry[0].y > 0) {
-        gameArry[0].y -= 5;
+        gameArry[0].y -= 10;
     }
     //want to call function in here
     //activate();
+
+    //the location of npc mantis gives you a key when on same location and
+    //spacebar(32) is pressed
     if (gameArry[0].x == gameArry[1].x && gameArry[0].y == gameArry[1].y && e.keyCode == 32) {
         alert(NPC.greeting);
         player.item1 = "key"
+    }
+
+    //tell you house is locked if you dont have a key unlocks if you do
+    if (player.x == doorHouse1.x && player.y == doorHouse1.y && e.keyCode == 32) {
+        if (player.item1 === "key") {
+            alert("the key unlocked the house");
+        } else {
+            alert(doorHouse1.greeting);
+        }
     }
 
 
