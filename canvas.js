@@ -16,7 +16,8 @@ let gameObjects = class {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.xCenter = this.width / 2 + this.x
+        this.centerPoint = [this.width / 2 + this.x, this.height / 2 + this.y]
+        this.xCenter = this.height / 2 + this.x
         this.yCenter = this.height / 2 + this.y
         gameArry.push(this);
     }
@@ -24,11 +25,25 @@ let gameObjects = class {
 
 let gameArry = []
 
-
-const player = new gameObjects("player", "hello im the player", 0, 0, 0, 0, 20, 20);
-const NPC = new gameObjects("NPC", "hello im an NPC", "key", 0, 100, 250, 20, 20);
+let player = new gameObjects("player", "hello im the player", "", "", 0, 0, 20, 20);
+const NPC = new gameObjects("Metis", "Hello im an Metis", "key", 0, 100, 250, 20, 20);
 const house = new gameObjects("house", "door is locked", 0, 0, 600, 600, 70, 40);
 
+// const getDistanceBetweenEntity = (entity1, entity2) => {
+//     let vx = entity1.x - entity2.x;
+//     let vx = entity1.x - entity2.x;
+//     return Math.sqrt(vx * vx + vy * vy);
+// }
+
+// const testDistanceEntity = (entity1, entity2) => {
+//     let distance = getDistanceBetweenEntity(entity1, entity2);
+//     return distance < 10;
+//}
+
+//want to check the distance between player and enities
+const checkDistance = () => {
+    console.log('works');
+}
 
 function drawObjects() {
 
@@ -38,8 +53,8 @@ function drawObjects() {
     for (let i = 0; i < gameArry.length; i++) {
         let node = gameArry[i];
         context.rect(node.x, node.y, node.width, node.height);
-        context.fillStyle = node.color;
-        context.fill();
+
+
         context.stroke();
     }
 
@@ -51,8 +66,13 @@ drawObjects()
 
 
 const activate = () => {
-    if (nodes[0].x == nodes[1].x && nodes[0].y == nodes[1].y && e.keyCode == 32) {
-        alert('first NPC')
+    // if (player.xCenter == NPC.xCenter && player.yCenter == NPC.yCenter && e.keyCode == 32) {
+    //     alert('NPC gave you a key');
+    // }
+
+    if (gameArry[0].x == gameArry[1].x && gameArry[0].y == gameArry[1].y && e.keyCode == 32) {
+        alert('NPC gave you a key');
+        player.item1 = "key"
     }
 }
 
@@ -78,14 +98,15 @@ function move(e) {
     if (e.keyCode == 38 && gameArry[0].y > 0) {
         gameArry[0].y -= 5;
     }
+    //want to call function in here
+    //activate();
     if (gameArry[0].x == gameArry[1].x && gameArry[0].y == gameArry[1].y && e.keyCode == 32) {
-        alert('first NPC')
+        alert('NPC gave you a key');
     }
+
 
     canvas.width = canvas.width;
     drawObjects();
-
-
 
 }
 
