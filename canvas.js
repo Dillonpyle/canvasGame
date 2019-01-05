@@ -26,8 +26,10 @@ let gameObjects = class {
 let gameArry = []
 
 let player = new gameObjects("player", "hello im the player", "", "", 0, 0, 20, 20);
-const NPC = new gameObjects("Metis", "Hello im an Metis", "key", 0, 100, 250, 20, 20);
-const house = new gameObjects("house", "door is locked", 0, 0, 600, 600, 70, 40);
+const NPC = new gameObjects("Metis", "Hello im an Metis, here is a key to the house", "key", 0, 100, 250, 20, 20);
+const house1 = new gameObjects("house", "door is locked", 0, 0, 600, 600, 80, 40);
+const doorHouse1 = new gameObjects("door", "door is locked", 0, 0, 640, 620, 20, 20);
+
 
 // const getDistanceBetweenEntity = (entity1, entity2) => {
 //     let vx = entity1.x - entity2.x;
@@ -53,8 +55,6 @@ function drawObjects() {
     for (let i = 0; i < gameArry.length; i++) {
         let node = gameArry[i];
         context.rect(node.x, node.y, node.width, node.height);
-
-
         context.stroke();
     }
 
@@ -65,16 +65,11 @@ drawObjects()
 
 
 
-const activate = () => {
-    // if (player.xCenter == NPC.xCenter && player.yCenter == NPC.yCenter && e.keyCode == 32) {
-    //     alert('NPC gave you a key');
-    // }
-
-    if (gameArry[0].x == gameArry[1].x && gameArry[0].y == gameArry[1].y && e.keyCode == 32) {
-        alert('NPC gave you a key');
-        player.item1 = "key"
-    }
-}
+// const activate = () => {
+//     // if (player.xCenter == NPC.xCenter && player.yCenter == NPC.yCenter && e.keyCode == 32) {
+//     //     alert('NPC gave you a key');
+//     // }
+// }
 
 //------------------------------------
 
@@ -101,7 +96,8 @@ function move(e) {
     //want to call function in here
     //activate();
     if (gameArry[0].x == gameArry[1].x && gameArry[0].y == gameArry[1].y && e.keyCode == 32) {
-        alert('NPC gave you a key');
+        alert(NPC.greeting);
+        player.item1 = "key"
     }
 
 
