@@ -4,11 +4,12 @@ let canvasOffset = $("#canvas").offset();
 
 
 let playerConstructor = class {
-    constructor(id, greeting, item1, item2, x, y, width, height) {
+    constructor(id, greeting, item1, x, y, width, height) {
         this.id = id;
         this.greeting = greeting;
         this.item1 = item1;
-        this.item2 = item2;
+        this.health = 100;
+        this.sword = 0;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -44,6 +45,7 @@ let buildingConstructor = class {
         this.id = id;
         this.greeting = greeting;
         this.unlocked = false;
+        this.inside = false;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -56,21 +58,41 @@ let buildingConstructor = class {
     }
 }
 
+let enemyConstructor = class {
+    constructor(id, greeting, health, x, y, width, height) {
+        this.id = id;
+        this.greeting = greeting;
+        this.health = health;
+        this.damage = 5;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.xObjectCenter = this.width / 2
+        this.yObjectCenter = this.height / 2
+        this.centerPointX = this.x + this.xObjectCenter;
+        this.centerPointY = this.y + this.yObjectCenter;
+        enemyArry.push(this);
+    }
+}
+
 let gameArry = []
 let npcArry = []
 let buildingArry = []
+let enemyArry = []
 
 
-let player = new playerConstructor("player", "hello im the player", "", "", 0, 0, 20, 20);
+let player = new playerConstructor("player", "hello im the player", "", 0, 0, 20, 20);
 const metis = new npcConstructor("Metis", "Hello im an Metis, here is a key to the house", "key", 0, 100, 250, 20, 20);
 const house1 = new buildingConstructor("house", "door is locked", 600, 600, 80, 40);
 const doorHouse1 = new buildingConstructor("door", "door is locked", 640, 620, 20, 20);
 const chest1 = new buildingConstructor("chest1", "open chest", 340, 620, 20, 20);
+const enemy1 = new enemyConstructor("enemy1", "prepare to die", 10, 340, 520, 20, 20);
 
 canvas = document.getElementById('canvas');
 context = canvas.getContext('2d');
 
-let framesPerSecond = 80;
+let framesPerSecond = 100;
 window.onload = function () {
     setInterval(updateAll, 1000 / framesPerSecond);
 }
@@ -78,7 +100,7 @@ window.onload = function () {
 function updateAll() {
     if (doorHouse1.unlocked == false) {
         drawMainMap();
-    } else if (doorHouse1.unlocked == true) {
+    } else if (doorHouse1.inside == true) {
         drawHouseMap();
     }
 }
@@ -162,18 +184,27 @@ function unlockHouse1(e) {
 }
 
 function enterHouse1(e) {
+
+    if (player.centerPointX - doorHouse1.centerPointX < 30 &&
+        player.centerPointX - doorHouse1.centerPointX > -30 &&
+        player.centerPointY - doorHouse1.centerPointY < 30 &&
+        player.centerPointY - doorHouse1.centerPointY > -30 &&
+        doorHouse1.unlocked == true &&
+        e.keyCode == 38) {
+        doorHouse1.inside = true
+    }
+}
+
+function recieveSword(e) {
     if (player.centerPointX - chest1.centerPointX < 30 &&
         player.centerPointX - chest1.centerPointX > -30 &&
         player.centerPointY - chest1.centerPointY < 30 &&
         player.centerPointY - chest1.centerPointY > -30 &&
-        player.item1 == "key" &&
+        doorHouse1.unlocked == true &&
         e.keyCode == 32) {
-        if (player.item1 === "key") {
-            alert("you recieved a sword from chest");
-            player.item2 = "sword"
-        }
+        alert('you recieved a sword from the chest');
+        player.sword = 2
     }
-
 }
 
 //------------------------------------
@@ -206,13 +237,17 @@ function move(e) {
 }
 
 function activate(e) {
+    console.log("ACTIVATING" + e.keyCode)
     if (e.keyCode == 39 || e.keyCode == 37 || e.keyCode == 40 || e.keyCode == 38) {
+        console.log("MOVING")
         move(e);
+        enterHouse1(e);
     }
     if (e.keyCode == 32) {
+        console.log("TALKING/UNLOCKING/RECEIVING")
         talkToMatis(e);
         unlockHouse1(e);
-        enterHouse1(e);
+        recieveSword(e);
     }
 }
 
