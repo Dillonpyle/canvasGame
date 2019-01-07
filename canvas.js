@@ -7,8 +7,8 @@ let centerCanvasX = canvas.width / 2;
 let centerCanvasY = canvas.height / 2;
 
 let gameObjects = class {
-    constructor(name, greeting, item1, item2, x, y, width, height) {
-        this.name = name;
+    constructor(id, greeting, item1, item2, x, y, width, height) {
+        this.id = id;
         this.greeting = greeting;
         this.item1 = item1;
         this.item2 = item2;
@@ -16,9 +16,10 @@ let gameObjects = class {
         this.y = y;
         this.width = width;
         this.height = height;
-        this.centerPoint = [this.width / 2 + this.x, this.height / 2 + this.y]
-        this.xCenter = this.height / 2 + this.x
-        this.yCenter = this.height / 2 + this.y
+        this.xObjectCenter = this.width / 2
+        this.yObjectCenter = this.height / 2
+        this.centerPointX = this.x + this.xObjectCenter;
+        this.centerPointY = this.y + this.yObjectCenter;
         gameArry.push(this);
     }
 }
@@ -26,7 +27,7 @@ let gameObjects = class {
 let gameArry = []
 
 let player = new gameObjects("player", "hello im the player", "", "", 0, 0, 20, 20);
-const NPC = new gameObjects("Metis", "Hello im an Metis, here is a key to the house", "key", 0, 100, 250, 20, 20);
+const metis = new gameObjects("Metis", "Hello im an Metis, here is a key to the house", "key", 0, 100, 250, 20, 20);
 const house1 = new gameObjects("house", "door is locked", 0, 0, 600, 600, 80, 40);
 const doorHouse1 = new gameObjects("door", "door is locked", 0, 0, 640, 620, 20, 20);
 
@@ -43,9 +44,7 @@ const doorHouse1 = new gameObjects("door", "door is locked", 0, 0, 640, 620, 20,
 //}
 
 //want to check the distance between player and enities
-const checkDistance = () => {
-    console.log('works');
-}
+const checkDistance = () => {}
 
 //draws from the constructor array 
 function drawObjects() {
@@ -64,11 +63,12 @@ function drawObjects() {
 
 drawObjects()
 
-// const activate = () => {
-//     // if (player.xCenter == NPC.xCenter && player.yCenter == NPC.yCenter && e.keyCode == 32) {
-//     //     alert('NPC gave you a key');
-//     // }
-// }
+
+const updatePlayerCenter = () => {
+    player.centerPointX = player.x + player.xObjectCenter;
+    player.centerPointY = player.y + player.yObjectCenter;
+
+}
 
 //------------------------------------
 
@@ -91,18 +91,24 @@ function move(e) {
     if (e.keyCode == 38 && gameArry[0].y > 0) {
         gameArry[0].y -= 10;
     }
-    //want to call function in here
-    //activate();
 
-    //the location of npc mantis gives you a key when on same location and
-    //spacebar(32) is pressed
-    if (gameArry[0].x == gameArry[1].x && gameArry[0].y == gameArry[1].y && e.keyCode == 32) {
-        alert(NPC.greeting);
+    //talk to metis within a certain distance
+    if (player.centerPointX - metis.centerPointX < 30 &&
+        player.centerPointX - metis.centerPointX > -30 &&
+        player.centerPointY - metis.centerPointY < 30 &&
+        player.centerPointY - metis.centerPointY > -30 &&
+        e.keyCode == 32) {
+        alert(metis.greeting);
         player.item1 = "key"
     }
 
+    //-----------------unlock the home----------------------
     //tell you house is locked if you dont have a key unlocks if you do
-    if (player.x == doorHouse1.x && player.y == doorHouse1.y && e.keyCode == 32) {
+    if (player.centerPointX - doorHouse1.centerPointX < 30 &&
+        player.centerPointX - doorHouse1.centerPointX > -30 &&
+        player.centerPointY - doorHouse1.centerPointY < 30 &&
+        player.centerPointY - doorHouse1.centerPointY > -30 &&
+        e.keyCode == 32) {
         if (player.item1 === "key") {
             alert("the key unlocked the house");
         } else {
@@ -110,10 +116,15 @@ function move(e) {
         }
     }
 
+    //----------------enter the house--------------------------------
 
+
+    updatePlayerCenter();
     canvas.width = canvas.width;
     drawObjects();
 
 }
 
+
+//document.onkeydown = talkToMatis;
 document.onkeydown = move;
