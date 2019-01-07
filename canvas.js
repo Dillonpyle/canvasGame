@@ -6,7 +6,7 @@ let canvasOffset = $("#canvas").offset();
 let centerCanvasX = canvas.width / 2;
 let centerCanvasY = canvas.height / 2;
 
-let gameObjects = class {
+let playerConstructor = class {
     constructor(id, greeting, item1, item2, x, y, width, height) {
         this.id = id;
         this.greeting = greeting;
@@ -24,12 +24,50 @@ let gameObjects = class {
     }
 }
 
-let gameArry = []
+let npcConstructor = class {
+    constructor(id, greeting, item1, item2, x, y, width, height) {
+        this.id = id;
+        this.greeting = greeting;
+        this.item1 = item1;
+        this.item2 = item2;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.xObjectCenter = this.width / 2
+        this.yObjectCenter = this.height / 2
+        this.centerPointX = this.x + this.xObjectCenter;
+        this.centerPointY = this.y + this.yObjectCenter;
+        npcArry.push(this);
+    }
+}
 
-let player = new gameObjects("player", "hello im the player", "", "", 0, 0, 20, 20);
-const metis = new gameObjects("Metis", "Hello im an Metis, here is a key to the house", "key", 0, 100, 250, 20, 20);
-const house1 = new gameObjects("house", "door is locked", 0, 0, 600, 600, 80, 40);
-const doorHouse1 = new gameObjects("door", "door is locked", 0, 0, 640, 620, 20, 20);
+let buildingConstructor = class {
+    constructor(id, greeting, item1, item2, x, y, width, height) {
+        this.id = id;
+        this.greeting = greeting;
+        this.item1 = item1;
+        this.item2 = item2;
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+        this.xObjectCenter = this.width / 2
+        this.yObjectCenter = this.height / 2
+        this.centerPointX = this.x + this.xObjectCenter;
+        this.centerPointY = this.y + this.yObjectCenter;
+        buildingArry.push(this);
+    }
+}
+
+let gameArry = []
+let npcArry = []
+let buildingArry = []
+
+let player = new playerConstructor("player", "hello im the player", "", "", 0, 0, 20, 20);
+const metis = new npcConstructor("Metis", "Hello im an Metis, here is a key to the house", "key", 0, 100, 250, 20, 20);
+const house1 = new buildingConstructor("house", "door is locked", 0, 0, 600, 600, 80, 40);
+const doorHouse1 = new buildingConstructor("door", "door is locked", false, 0, 640, 620, 20, 20);
 
 
 // const getDistanceBetweenEntity = (entity1, entity2) => {
@@ -47,7 +85,7 @@ const doorHouse1 = new gameObjects("door", "door is locked", 0, 0, 640, 620, 20,
 const checkDistance = () => {}
 
 //draws from the constructor array 
-function drawObjects() {
+function drawMainMap() {
 
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.save();
@@ -57,11 +95,34 @@ function drawObjects() {
         context.rect(node.x, node.y, node.width, node.height);
         context.stroke();
     }
+    for (let i = 0; i < npcArry.length; i++) {
+        let node = npcArry[i];
+        context.rect(node.x, node.y, node.width, node.height);
+        context.stroke();
+    }
+    for (let i = 0; i < buildingArry.length; i++) {
+        let node = buildingArry[i];
+        context.rect(node.x, node.y, node.width, node.height);
+        context.stroke();
+    }
+
+
+    context.restore();
+}
+drawMainMap();
+
+function drawHouseMap() {
+
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    context.save();
+
+    context.rect(player.x, player.y, player.width, player.height);
+    context.stroke();
 
     context.restore();
 }
 
-drawObjects()
+
 
 
 const updatePlayerCenter = () => {
@@ -103,7 +164,7 @@ function move(e) {
     }
 
     //-----------------unlock the home----------------------
-    //tell you house is locked if you dont have a key unlocks if you do
+    //tell you house is locked if you dont have a key unlocks if you do from a distance
     if (player.centerPointX - doorHouse1.centerPointX < 30 &&
         player.centerPointX - doorHouse1.centerPointX > -30 &&
         player.centerPointY - doorHouse1.centerPointY < 30 &&
@@ -111,18 +172,20 @@ function move(e) {
         e.keyCode == 32) {
         if (player.item1 === "key") {
             alert("the key unlocked the house");
+            doorHouse1.item1 = true;
         } else {
             alert(doorHouse1.greeting);
         }
     }
 
-    //----------------enter the house--------------------------------
-
-
     updatePlayerCenter();
     canvas.width = canvas.width;
-    drawObjects();
-
+    //----------------enter the house--------------------------------
+    if (doorHouse1.item1 == false) {
+        drawMainMap();
+    } else {
+        drawHouseMap();
+    }
 }
 
 
