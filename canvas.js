@@ -64,6 +64,7 @@ let enemyConstructor = class {
         this.greeting = greeting;
         this.health = health;
         this.damage = 5;
+        this.alive = true;
         this.x = x;
         this.y = y;
         this.width = width;
@@ -86,8 +87,10 @@ let player = new playerConstructor("player", "hello im the player", "", 0, 0, 20
 const metis = new npcConstructor("Metis", "Hello im an Metis, here is a key to the house", "key", 0, 100, 250, 20, 20);
 const house1 = new buildingConstructor("house", "door is locked", 600, 600, 80, 40);
 const doorHouse1 = new buildingConstructor("door", "door is locked", 640, 620, 20, 20);
-const chest1 = new buildingConstructor("chest1", "open chest", 340, 620, 20, 20);
-const enemy1 = new enemyConstructor("enemy1", "prepare to die", 10, 340, 520, 20, 20);
+const insideOfHouse = new buildingConstructor("inside", "theres a chest, better check it", 250, 250, 200, 200);
+const chest1 = new buildingConstructor("chest1", "open chest", 340, 320, 20, 20);
+const enemy1 = new enemyConstructor("enemy1", "prepare to die", 10, 200, 400, 20, 20);
+const insideDoorHouse1 = new buildingConstructor("door", "door is locked", 250, 400, 20, 20);
 
 canvas = document.getElementById('canvas');
 context = canvas.getContext('2d');
@@ -98,10 +101,13 @@ window.onload = function () {
 }
 
 function updateAll() {
-    if (doorHouse1.unlocked == false) {
-        drawMainMap();
-    } else if (doorHouse1.inside == true) {
+    if (doorHouse1.inside == true) {
         drawHouseMap();
+    } else if (player.sword === 2 && doorHouse1.inside == false) {
+        drawMainMap();
+        drawEnemies();
+    } else {
+        drawMainMap();
     }
 }
 
@@ -135,7 +141,6 @@ function drawMainMap() {
     context.restore();
 }
 
-
 //in first house
 function drawHouseMap() {
 
@@ -145,11 +150,22 @@ function drawHouseMap() {
     context.rect(player.x, player.y, player.width, player.height);
     context.stroke();
 
+    context.rect(insideOfHouse.x, insideOfHouse.y, insideOfHouse.width, insideOfHouse.height);
+    context.stroke();
+
     context.rect(chest1.x, chest1.y, chest1.width, chest1.height);
+    context.stroke();
+
+    context.rect(insideDoorHouse1.x, insideDoorHouse1.y, insideDoorHouse1.width, insideDoorHouse1.height);
     context.stroke();
 
 
     context.restore();
+}
+
+function drawEnemies() {
+    context.rect(enemy1.x, enemy1.y, enemy1.width, enemy1.height);
+    context.stroke();
 }
 
 const updatePlayerCenter = () => {
@@ -192,6 +208,8 @@ function enterHouse1(e) {
         doorHouse1.unlocked == true &&
         e.keyCode == 38) {
         doorHouse1.inside = true
+        player.x = 250
+        player.y = 400
     }
 }
 
@@ -206,6 +224,27 @@ function recieveSword(e) {
         player.sword = 2
     }
 }
+
+function leaveHouse(e) {
+    if (player.centerPointX - insideDoorHouse1.centerPointX < 30 &&
+        player.centerPointX - insideDoorHouse1.centerPointX > -30 &&
+        player.centerPointY - insideDoorHouse1.centerPointY < 30 &&
+        player.centerPointY - insideDoorHouse1.centerPointY > -30 &&
+        e.keyCode == 32) {
+        doorHouse1.inside = false
+    }
+}
+
+function fightEnemy(e) {
+    if (player.centerPointX - enemy1.centerPointX < 30 &&
+        player.centerPointX - enemy1.centerPointX > -30 &&
+        player.centerPointY - enemy1.centerPointY < 30 &&
+        player.centerPointY - enemy1.centerPointY > -30 &&
+        e.keyCode == 32) {
+        alert('fighting enemy');
+    }
+}
+
 
 //------------------------------------
 
@@ -232,7 +271,7 @@ function move(e) {
     updatePlayerCenter();
     canvas.width = canvas.width;
 
-    //------------enter house 1---------------------
+
 
 }
 
@@ -248,6 +287,8 @@ function activate(e) {
         talkToMatis(e);
         unlockHouse1(e);
         recieveSword(e);
+        leaveHouse(e);
+        fightEnemy(e);
     }
 }
 
