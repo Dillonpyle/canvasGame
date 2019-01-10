@@ -204,6 +204,16 @@ let playerConstructor = class {
 }
 
 playerArry = [];
+playerInventory = {
+    pokemon: [],
+    items: [],
+}
+
+pokemon = {
+    charmander: 10,
+    squritle: 8,
+    bulbasaur: 2
+}
 
 
 let player = new playerConstructor("player", "hello im the player", "", mainTown.layers[3].objects[1].x, mainTown.layers[3].objects[1].y, 16, 16);
@@ -293,15 +303,28 @@ function enterHouse1(e) {
     }
 }
 
-function recieveSword(e) {
+function recievePokemon(e) {
     if (player.centerPointX - profOak.centerPointX < 30 &&
         player.centerPointX - profOak.centerPointX > -30 &&
         player.centerPointY - profOak.centerPointY < 30 &&
         player.centerPointY - profOak.centerPointY > -30 &&
-        doorHouse1.inside == true &&
-        e.keyCode == 32) {
+        doorHouse1.inside == true) {
         alert('would you like a pokemon?');
-        player.sword = 2
+        const $div = $('<div/>', {
+            id: 'buttonArray'
+        });
+        $('body').append($div);
+        const $ul = $('<ul/>', {
+            id: 'buttons'
+        });
+        $($div).append($ul);
+        $.each(pokemon, function (index, value) {
+            var $button = $('<button/>').attr({
+                type: 'button',
+                id: index,
+            }).text(index);
+            $('#buttons').append($button);
+        });
     }
 }
 
@@ -374,11 +397,23 @@ function activate(e) {
     if (e.keyCode == 32) {
         console.log(e.keyCode)
         talkToMom();
-        recieveSword(e);
+        recievePokemon();
         console.log("TALKING/UNLOCKING/RECEIVING")
 
     }
 }
 
+$(document).on('click', '#bulbasaur', function () {
+    alert('Your parents dropped you when you were a baby huh?')
+});
+$(document).on('click', '#squritle', function () {
+    alert('i think you ment to click charmander')
+});
+$(document).on('click', '#charmander', function () {
+    alert('Congrats heres your first pokemon!')
+    playerInventory.pokemon = {
+        charmander: 10
+    };
+});
 
 document.onkeydown = activate;
