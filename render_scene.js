@@ -208,6 +208,17 @@ playerInventory = {
     pokemon: [],
     items: [],
 }
+wildPokemon = [{
+        id: 'pidgy',
+        hp: 25,
+        damage: 4
+    },
+    {
+        id: 'weedle',
+        hp: 20,
+        damage: 6
+    }
+]
 
 pokemon = {
     charmander: 10,
@@ -220,6 +231,7 @@ let player = new playerConstructor("player", "hello im the player", "", mainTown
 const mom = new playerConstructor("mom", "go to the blue house", "", mainTown.layers[3].objects[0].x, mainTown.layers[3].objects[0].x, 16, 16);
 const doorHouse1 = new playerConstructor("door", "door is locked", false, 569, 529, 16, 16);
 const profOak = new playerConstructor("profOak", "open chest", false, 300, 110, 16, 16);
+const exitProfOakLab = new playerConstructor("exit", "", false, 350, 780, 100, 30)
 
 
 
@@ -263,6 +275,10 @@ function drawHouseMap() {
     c.rect(profOak.x, profOak.y, 16, 16);
     c.stroke();
 
+    c.rect(exitProfOakLab.x, exitProfOakLab.y, exitProfOakLab.width, exitProfOakLab.height);
+    c.stroke();
+
+
     $('#canvas').removeClass('mapLayer');
     $('#canvas').addClass('OakLabLayer');
 }
@@ -303,7 +319,7 @@ function enterHouse1(e) {
     }
 }
 
-function recievePokemon(e) {
+function recievePokemon() {
     if (player.centerPointX - profOak.centerPointX < 30 &&
         player.centerPointX - profOak.centerPointX > -30 &&
         player.centerPointY - profOak.centerPointY < 30 &&
@@ -328,6 +344,18 @@ function recievePokemon(e) {
     }
 }
 
+function leaveHouse1(e) {
+
+    if (player.centerPointX - exitProfOakLab.centerPointX < 50 &&
+        player.centerPointX - exitProfOakLab.centerPointX > -50 &&
+        player.centerPointY - exitProfOakLab.centerPointY < 30 &&
+        player.centerPointY - exitProfOakLab.centerPointY > -30 &&
+        e.keyCode == 40) {
+        doorHouse1.inside = false
+        mainTown.layers[3].objects[1].x = 570
+        mainTown.layers[3].objects[1].y = 550
+    }
+}
 
 function move(e) {
     console.log(e.keyCode);
@@ -392,6 +420,7 @@ function activate(e) {
         console.log("MOVING")
         move(e);
         enterHouse1(e);
+        leaveHouse1(e);
 
     }
     if (e.keyCode == 32) {
@@ -411,9 +440,13 @@ $(document).on('click', '#squritle', function () {
 });
 $(document).on('click', '#charmander', function () {
     alert('Congrats heres your first pokemon!')
-    playerInventory.pokemon = {
-        charmander: 10
-    };
+    playerInventory.pokemon = [{
+        id: 'charmander',
+        hp: 50,
+        damage: 12,
+        exp: 0
+    }];
+    $('#buttonArray').hide()
 });
 
 document.onkeydown = activate;
