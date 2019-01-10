@@ -83,14 +83,14 @@ let buildingArry = []
 let enemyArry = []
 
 
-let player = new playerConstructor("player", "hello im the player", "", 0, 0, 20, 20);
-const metis = new npcConstructor("Metis", "Hello im an Metis, here is a key to the house", "key", 0, 100, 250, 20, 20);
+let player = new playerConstructor("player", "hello im the player", "", 0, 0, 16, 16);
+const metis = new npcConstructor("Metis", "Hello im an Metis, here is a key to the house", "key", 0, 100, 250, 16, 16);
 const house1 = new buildingConstructor("house", "door is locked", 600, 600, 80, 40);
-const doorHouse1 = new buildingConstructor("door", "door is locked", 640, 620, 20, 20);
+const doorHouse1 = new buildingConstructor("door", "door is locked", 640, 620, 16, 16);
 const insideOfHouse = new buildingConstructor("inside", "theres a chest, better check it", 250, 250, 200, 200);
-const chest1 = new buildingConstructor("chest1", "open chest", 340, 320, 20, 20);
-const enemy1 = new enemyConstructor("enemy1", "prepare to die", 10, 200, 400, 20, 20);
-const insideDoorHouse1 = new buildingConstructor("door", "door is locked", 250, 400, 20, 20);
+const chest1 = new buildingConstructor("chest1", "open chest", 340, 320, 16, 16);
+const enemy1 = new enemyConstructor("enemy1", "prepare to die", 10, 200, 400, 16, 16);
+const insideDoorHouse1 = new buildingConstructor("door", "door is locked", 250, 400, 16, 16);
 
 canvas = document.getElementById('canvas');
 context = canvas.getContext('2d');
