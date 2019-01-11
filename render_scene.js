@@ -239,7 +239,14 @@ const profOak = new playerConstructor("profOak", "open chest", false, 300, 110, 
 const exitProfOakLab = new playerConstructor("exit", "", false, 350, 780, 100, 30);
 const wildPokemonZone = new playerConstructor("battleZone", "A wild pokemon appeared", false, 128, 460, 220, 190);
 const house1 = new playerConstructor("house1", "", false, 145, 255, 95, 80);
-const house2 = new playerConstructor("house2", "", false, 145, 255, 95, 80);
+const house2 = new playerConstructor("house2", "", false, 495, 240, 95, 80);
+
+function gameOver() {
+    if (playerInventory.pokemon[0].hp <= 0) {
+        $('canvas').hide()
+        alert('charmander died go home');
+    }
+}
 
 
 
@@ -255,7 +262,14 @@ function updateAll() {
     mapSelector();
     c.restore();
     //------------------
+    gameOver();
+    themeMusic();
     //renderMap();
+}
+
+function themeMusic() {
+    let audio = document.getElementsByTagName("audio")[0];
+    audio.play();
 }
 
 function mapSelector() {
@@ -263,25 +277,21 @@ function mapSelector() {
         drawHouseMap();
     } else {
         drawMainMap();
+
     }
 }
 
 function drawMainMap() {
     $('#canvas').removeClass('OakLabLayer')
     $('#canvas').addClass('mapLayer');
+
     c.rect(mainTown.layers[3].objects[1].x, mainTown.layers[3].objects[1].y, 16, 16);
     c.stroke();
 
-    c.rect(doorHouse1.x, doorHouse1.y, doorHouse1.width, doorHouse1.height);
-    c.stroke();
-
-    c.rect(doorHouse1.x, doorHouse1.y, doorHouse1.width, doorHouse1.height);
-    c.stroke();
-
-    c.rect(wildPokemonZone.x, wildPokemonZone.y, wildPokemonZone.width, wildPokemonZone.height);
-    c.stroke();
-
     c.rect(house1.x, house1.y, house1.width, house1.height);
+    c.stroke();
+
+    c.rect(house2.x, house2.y, house2.width, house2.height);
     c.stroke();
 }
 
@@ -297,13 +307,13 @@ function drawHouseMap() {
 }
 
 //sets players center point on map based off a 16x16 tile
-const updatePlayerCenter = () => {
+function updatePlayerCenter() {
     player.centerPointX = mainTown.layers[3].objects[1].x + 8;
     player.centerPointY = mainTown.layers[3].objects[1].y + 8;
 }
 
 //setting mom characters location
-const updateNPCLocations = () => {
+function updateNPCLocations() {
     mom.centerPointX = 420;
     mom.centerPointY = 409;
 }
@@ -362,16 +372,18 @@ function recievePokemon() {
 
 //lets you walk around the battle zone and battle at random
 function allowWildPokemon(e) {
-    let randomNumber = Math.floor(Math.random() * 200) + 1
+    let randomNumber = Math.floor(Math.random() * 10) + 1
     if (player.centerPointX - wildPokemonZone.centerPointX < 110 &&
         player.centerPointX - wildPokemonZone.centerPointX > -110 &&
         player.centerPointY - wildPokemonZone.centerPointY < 95 &&
         player.centerPointY - wildPokemonZone.centerPointY > -95 &&
-        randomNumber > 180 &&
+        randomNumber > 9 &&
         doorHouse1.inside == false &&
         (e.keyCode === 39 || e.keyCode === 40 || e.keyCode === 38 || e.keyCode === 37)) {
         battleButtons();
         alert(wildPokemonZone.greeting);
+        // let audio = document.getElementsByTagName("audio")[1];
+        // audio.play();
     }
 }
 
@@ -401,6 +413,9 @@ function battlephase() {
         $('#battleButtonArray').remove()
         alert('you beat wild pidgy')
         raiseWildPokemonHP()
+    } else {
+        alert(`pidgy used peck. It did ${wildPokemon[0].damage} damage!`);
+        playerInventory.pokemon[0].hp = playerInventory.pokemon[0].hp - wildPokemon[0].damage
     }
 }
 
@@ -419,10 +434,7 @@ function healthBars() {
         .text(wildPokemon[0].hp + "pidgys HP");
 }
 
-function enemyAttack() {
-    playerInventory.pokemon[0].hp = playerInventory.pokemon[0].hp - wildPokemon[0].damage
-}
-
+//raises wild pokemons hp after battle
 function raiseWildPokemonHP() {
     wildPokemon[0].hp = 37
 }
@@ -440,9 +452,19 @@ function leaveOaksLab(e) {
     }
 }
 
+function houseBoundaries() {
+    if (player.centerPointX - house1.centerPointX < 47.5 &&
+        player.centerPointX - house1.centerPointX > -47.5 &&
+        player.centerPointY - house1.centerPointY < 40 &&
+        player.centerPointY - house1.centerPointY > -40) {
+        alert('in house1');
+        house1.inside = true;
+    }
+}
+
 function move(e) {
     console.log(e.keyCode);
-    if ($('#canvas').hasClass('mapLayer')) {
+    if ($('#canvas').hasClass('mapLayer') && house1.inside == false) {
         //move right     
         if (e.keyCode == 39 && mainTown.layers[3].objects[1].x < 687) {
             console.log(mainTown.layers[3].objects[1].x);
@@ -488,11 +510,8 @@ function move(e) {
         }
     }
 
-
-
     updatePlayerCenter();
     updateNPCLocations();
-
 
     canvas.width = canvas.width;
 
@@ -534,16 +553,15 @@ $(document).on('click', '#charmander', function () {
 });
 
 $(document).on('click', '#attack', function () {
-    alert('attacking');
+    alert(`charmander used scratch! It did ${playerInventory.pokemon[0].damage}  damage!`);
     battlephase();
-    enemyAttack();
     healthBars();
 
 });
 
 $(document).on('click', '#run', function () {
     alert('fled from wild pokemon');
-    $('#buttonArray').hide()
+    $('#battleButtonArray').hide()
 });
 
 document.onkeydown = activate;

@@ -111,7 +111,6 @@ function updateAll() {
     }
 }
 
-
 //want to check the distance between player and enities
 const checkDistance = () => {}
 
