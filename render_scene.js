@@ -220,8 +220,6 @@ wildPokemon = [{
     }
 ]
 
-
-
 pokemon = {
     charmander: 10,
     squritle: 8,
@@ -333,6 +331,7 @@ function enterHouse1(e) {
     }
 }
 
+//the prof in the lab give you a pokemon
 function recievePokemon() {
     if (player.centerPointX - profOak.centerPointX < 30 &&
         player.centerPointX - profOak.centerPointX > -30 &&
@@ -361,6 +360,7 @@ function recievePokemon() {
     }
 }
 
+//lets you walk around the battle zone and battle at random
 function allowWildPokemon(e) {
     let randomNumber = Math.floor(Math.random() * 200) + 1
     if (player.centerPointX - wildPokemonZone.centerPointX < 110 &&
@@ -375,6 +375,7 @@ function allowWildPokemon(e) {
     }
 }
 
+//adds attack and flee options
 function battleButtons() {
     const $div = $('<div/>', {
         id: 'battleButtonArray'
@@ -393,17 +394,41 @@ function battleButtons() {
     });
 }
 
+//removes battle buttons at end of fight
 function battlephase() {
+
     if (wildPokemon[0].hp <= 11) {
         $('#battleButtonArray').remove()
         alert('you beat wild pidgy')
+        raiseWildPokemonHP()
     }
-
 }
 
+//HP bars for player and enemy also damage counter
+function healthBars() {
+    wildPokemon[0].hp = wildPokemon[0].hp - playerInventory.pokemon[0].damage
 
+    $("#yourHP")
+        .css("width", playerInventory.pokemon[0].hp + "%")
+        .attr("aria-valuenow", playerInventory.pokemon[0].hp)
+        .text(playerInventory.pokemon[0].hp + "charmanders HP");
 
-function leaveHouse1(e) {
+    $("#enemyHP")
+        .css("width", wildPokemon[0].hp + "%")
+        .attr("aria-valuenow", wildPokemon[0].hp)
+        .text(wildPokemon[0].hp + "pidgys HP");
+}
+
+function enemyAttack() {
+    playerInventory.pokemon[0].hp = playerInventory.pokemon[0].hp - wildPokemon[0].damage
+}
+
+function raiseWildPokemonHP() {
+    wildPokemon[0].hp = 37
+}
+
+//lets you leave prof Oaks lab
+function leaveOaksLab(e) {
     if (player.centerPointX - exitProfOakLab.centerPointX < 50 &&
         player.centerPointX - exitProfOakLab.centerPointX > -50 &&
         player.centerPointY - exitProfOakLab.centerPointY < 30 &&
@@ -478,7 +503,7 @@ function activate(e) {
         console.log("MOVING")
         move(e);
         enterHouse1(e);
-        leaveHouse1(e);
+        leaveOaksLab(e);
         allowWildPokemon(e);
 
     }
@@ -510,8 +535,10 @@ $(document).on('click', '#charmander', function () {
 
 $(document).on('click', '#attack', function () {
     alert('attacking');
-    battlephase()
-    wildPokemon[0].hp = wildPokemon[0].hp - playerInventory.pokemon[0].damage
+    battlephase();
+    enemyAttack();
+    healthBars();
+
 });
 
 $(document).on('click', '#run', function () {
