@@ -220,18 +220,28 @@ wildPokemon = [{
     }
 ]
 
+
+
 pokemon = {
     charmander: 10,
     squritle: 8,
     bulbasaur: 2
 }
 
+battleOptions = {
+    attack: "attacking",
+    run: "fleeing"
+};
+
 
 let player = new playerConstructor("player", "hello im the player", "", mainTown.layers[3].objects[1].x, mainTown.layers[3].objects[1].y, 16, 16);
 const mom = new playerConstructor("mom", "go to the blue house", "", mainTown.layers[3].objects[0].x, mainTown.layers[3].objects[0].x, 16, 16);
 const doorHouse1 = new playerConstructor("door", "door is locked", false, 569, 529, 16, 16);
 const profOak = new playerConstructor("profOak", "open chest", false, 300, 110, 16, 16);
-const exitProfOakLab = new playerConstructor("exit", "", false, 350, 780, 100, 30)
+const exitProfOakLab = new playerConstructor("exit", "", false, 350, 780, 100, 30);
+const wildPokemonZone = new playerConstructor("battleZone", "A wild pokemon appeared", false, 128, 460, 220, 190);
+const house1 = new playerConstructor("house1", "", false, 145, 255, 95, 80);
+const house2 = new playerConstructor("house2", "", false, 145, 255, 95, 80);
 
 
 
@@ -266,6 +276,15 @@ function drawMainMap() {
 
     c.rect(doorHouse1.x, doorHouse1.y, doorHouse1.width, doorHouse1.height);
     c.stroke();
+
+    c.rect(doorHouse1.x, doorHouse1.y, doorHouse1.width, doorHouse1.height);
+    c.stroke();
+
+    c.rect(wildPokemonZone.x, wildPokemonZone.y, wildPokemonZone.width, wildPokemonZone.height);
+    c.stroke();
+
+    c.rect(house1.x, house1.y, house1.width, house1.height);
+    c.stroke();
 }
 
 function drawHouseMap() {
@@ -274,10 +293,6 @@ function drawHouseMap() {
 
     c.rect(profOak.x, profOak.y, 16, 16);
     c.stroke();
-
-    c.rect(exitProfOakLab.x, exitProfOakLab.y, exitProfOakLab.width, exitProfOakLab.height);
-    c.stroke();
-
 
     $('#canvas').removeClass('mapLayer');
     $('#canvas').addClass('OakLabLayer');
@@ -307,7 +322,6 @@ function talkToMom() {
 
 //entering house
 function enterHouse1(e) {
-
     if (player.centerPointX - doorHouse1.centerPointX < 30 &&
         player.centerPointX - doorHouse1.centerPointX > -30 &&
         player.centerPointY - doorHouse1.centerPointY < 30 &&
@@ -324,6 +338,7 @@ function recievePokemon() {
         player.centerPointX - profOak.centerPointX > -30 &&
         player.centerPointY - profOak.centerPointY < 30 &&
         player.centerPointY - profOak.centerPointY > -30 &&
+        !playerInventory.pokemon.length &&
         doorHouse1.inside == true) {
         alert('would you like a pokemon?');
         const $div = $('<div/>', {
@@ -334,18 +349,61 @@ function recievePokemon() {
             id: 'buttons'
         });
         $($div).append($ul);
-        $.each(pokemon, function (index, value) {
+        $.each(pokemon, function (index) {
             var $button = $('<button/>').attr({
                 type: 'button',
                 id: index,
             }).text(index);
             $('#buttons').append($button);
         });
+    } else {
+        alert('I gave you a pokemon, you should try to get it to fight with other animals')
     }
 }
 
-function leaveHouse1(e) {
+function allowWildPokemon(e) {
+    let randomNumber = Math.floor(Math.random() * 200) + 1
+    if (player.centerPointX - wildPokemonZone.centerPointX < 110 &&
+        player.centerPointX - wildPokemonZone.centerPointX > -110 &&
+        player.centerPointY - wildPokemonZone.centerPointY < 95 &&
+        player.centerPointY - wildPokemonZone.centerPointY > -95 &&
+        randomNumber > 180 &&
+        doorHouse1.inside == false &&
+        (e.keyCode === 39 || e.keyCode === 40 || e.keyCode === 38 || e.keyCode === 37)) {
+        battleButtons();
+        alert(wildPokemonZone.greeting);
+    }
+}
 
+function battleButtons() {
+    const $div = $('<div/>', {
+        id: 'battleButtonArray'
+    });
+    $('body').append($div);
+    const $ul = $('<ul/>', {
+        id: 'buttons'
+    });
+    $($div).append($ul);
+    $.each(battleOptions, function (index, value) {
+        var $button = $('<button/>').attr({
+            type: 'button',
+            id: index,
+        }).text(index);
+        $('#battleButtonArray').append($button);
+    });
+}
+
+function battlephase() {
+    if (wildPokemon[0].hp <= 11) {
+        $('#battleButtonArray').remove()
+        alert('you beat wild pidgy')
+    }
+
+}
+
+
+
+function leaveHouse1(e) {
     if (player.centerPointX - exitProfOakLab.centerPointX < 50 &&
         player.centerPointX - exitProfOakLab.centerPointX > -50 &&
         player.centerPointY - exitProfOakLab.centerPointY < 30 &&
@@ -421,6 +479,7 @@ function activate(e) {
         move(e);
         enterHouse1(e);
         leaveHouse1(e);
+        allowWildPokemon(e);
 
     }
     if (e.keyCode == 32) {
@@ -446,6 +505,17 @@ $(document).on('click', '#charmander', function () {
         damage: 12,
         exp: 0
     }];
+    $('#buttonArray').hide()
+});
+
+$(document).on('click', '#attack', function () {
+    alert('attacking');
+    battlephase()
+    wildPokemon[0].hp = wildPokemon[0].hp - playerInventory.pokemon[0].damage
+});
+
+$(document).on('click', '#run', function () {
+    alert('fled from wild pokemon');
     $('#buttonArray').hide()
 });
 
