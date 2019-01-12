@@ -65,7 +65,7 @@ const mainTown = {
                     "visible": true,
                     "width": 16,
                     "x": 189.475315585552,
-                    "y": 440.445944256968
+                    "y": 425.445944256968
                 }
             ],
             "opacity": 1,
@@ -107,78 +107,7 @@ const mainTown = {
 
 let scene;
 var c = document.getElementById('canvas').getContext("2d");
-// const renderMap = () => {
-//     //var c = $("canvas")[0].getContext("2d");
 
-
-//     scene = {
-//         layers: [],
-//         renderLayer: function (layer) {
-//             // data: [array of tiles, 1-based, position of sprite from top-left]
-//             // height: integer, height in number of sprites
-//             // name: "string", internal name of layer
-//             // opacity: integer
-//             // type: "string", layer type (tile, object)
-//             // visible: boolean
-//             // width: integer, width in number of sprites
-//             // x: integer, starting x position
-//             // y: integer, starting y position
-//             if (layer.type !== "tilelayer" || !layer.opacity) {
-//                 return;
-//             }
-//             var s = c.canvas.cloneNode(),
-//                 size = scene.data.tilewidth;
-//             s = s.getContext("2d");
-//             if (scene.layers.length < scene.data.layers.length) {
-//                 layer.data.forEach(function (tile_idx, i) {
-//                     if (!tile_idx) {
-//                         return;
-//                     }
-//                     var img_x, img_y, s_x, s_y,
-//                         tile = scene.data.tilesets[0];
-//                     tile_idx--;
-//                     img_x = (tile_idx % (tile.imagewidth / size)) * size;
-//                     img_y = ~~(tile_idx / (tile.imagewidth / size)) * size;
-//                     s_x = (i % layer.width) * size;
-//                     s_y = ~~(i / layer.width) * size;
-//                     s.drawImage(scene.tileset, img_x, img_y, size, size,
-//                         s_x, s_y, size, size);
-//                 });
-//                 scene.layers.push(s.canvas.toDataURL());
-//                 c.drawImage(s.canvas, 0, 0);
-//             } else {
-//                 scene.layers.forEach(function (src) {
-//                     var i = $("<img />", {
-//                         src: src
-//                     })[0];
-//                     c.drawImage(i, 0, 0);
-//                 });
-//             }
-//         },
-//         renderLayers: function (layers) {
-//             layers = $.isArray(layers) ? layers : this.data.layers;
-//             layers.forEach(this.renderLayer);
-//         },
-//         loadTileset: function (json) {
-//             this.data = json;
-//             this.tileset = $("<img />", {
-//                 src: json.tilesets[0].image
-//             })[0]
-//             this.tileset.onload = $.proxy(this.renderLayers, this);
-//         },
-//         load: function (name) {
-//             return this.loadTileset(mainTown)
-//             //return $.ajax({
-//             //url: "mainTown",
-//             //type: "json"
-//             //}).done($.proxy(this.loadTileset, this));
-//         }
-
-//     };
-
-
-//     scene.load("palletTown");
-// };
 
 //-------------------------------------------------------------
 canvas = document.getElementById('canvas');
@@ -241,14 +170,13 @@ const wildPokemonZone = new playerConstructor("battleZone", "A wild pokemon appe
 const house1 = new playerConstructor("house1", "", false, 145, 255, 95, 80);
 const house2 = new playerConstructor("house2", "", false, 495, 240, 95, 80);
 
+//if charmander dies game over
 function gameOver() {
     if (playerInventory.pokemon[0].hp <= 0) {
         $('canvas').hide()
         alert('charmander died go home');
     }
 }
-
-
 
 let framesPerSecond = 120;
 window.onload = function () {
@@ -264,17 +192,16 @@ function updateAll() {
     //------------------
     gameOver();
     themeMusic();
-    //renderMap();
 }
 
 function themeMusic() {
-    let audio = document.getElementsByTagName("audio")[0];
+    let audio = document.getElementsByTagName("audio")[1];
     audio.play();
 }
 
 function mapSelector() {
     if (doorHouse1.inside == true) {
-        drawHouseMap();
+        drawOaksLab();
     } else {
         drawMainMap();
 
@@ -288,14 +215,10 @@ function drawMainMap() {
     c.rect(mainTown.layers[3].objects[1].x, mainTown.layers[3].objects[1].y, 16, 16);
     c.stroke();
 
-    c.rect(house1.x, house1.y, house1.width, house1.height);
-    c.stroke();
 
-    c.rect(house2.x, house2.y, house2.width, house2.height);
-    c.stroke();
 }
 
-function drawHouseMap() {
+function drawOaksLab() {
     c.rect(mainTown.layers[3].objects[1].x, mainTown.layers[3].objects[1].y, 16, 16);
     c.stroke();
 
